@@ -56,10 +56,25 @@ type Content struct {
 type GetContentsResponse Content
 
 type CreateContentsBody struct {
-	CopyFrom string `json:"copy_from"`
-	Ext      string `json:"ext"`
-	Type     string `json:"type"`
+	CopyFrom string `json:"copy_from,omitempty"`
+	Ext      string `json:"ext,omitempty"`
+	Type     string `json:"type,omitempty"`
 }
 
-type CreateContentsResponse struct {
+type CreateContentsResponse Content
+
+type PatchContentsBody struct {
+	Path string `json:"path"`
 }
+
+type PatchContentsResponse Content
+
+type PutContentsBody struct {
+	Content string `json:"content"`
+	Format  string `json:"format"` // json, text, base64
+	Name    string `json:"name"`
+	Path    string `json:"path"`
+	Type    string `json:"type"` // notebook, file, directory
+}
+
+type PutContentsResponse Content

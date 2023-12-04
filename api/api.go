@@ -70,9 +70,9 @@ func (c *ClientConfig) GetVersion(ctx context.Context) (*GetVersionResponse, err
 }
 
 func (c *ClientConfig) GetContents(ctx context.Context, path string, options *GetContentsParams) (*GetContentsResponse, error) {
-	url := "contents"
+	url := fmt.Sprintf("contents/%s", path)
 	if options != nil {
-		url = fmt.Sprintf("%s?%s", url, options.Encode())
+		url = fmt.Sprintf("contents/%s?%s", path, options.Encode())
 	}
 
 	data, err := c.Request(ctx, http.MethodGet, url, "application/json", nil)
@@ -88,17 +88,70 @@ func (c *ClientConfig) GetContents(ctx context.Context, path string, options *Ge
 }
 
 func (c *ClientConfig) CreateContents(ctx context.Context, path string, options *CreateContentsBody) (*CreateContentsResponse, error) {
-	_, err := json.Marshal(options)
+	body, err := json.Marshal(options)
 	if err != nil {
 		return nil, err
 	}
-	return nil, nil
+	fmt.Println(string(body))
+
+	url := fmt.Sprintf("contents/%s", path)
+	data, err := c.Request(ctx, http.MethodPost, url, "application/json", body)
+	if err != nil {
+		return nil, err
+	}
+
+	var result CreateContentsResponse
+	if err := json.Unmarshal(data, &result); err != nil {
+		return nil, err
+	}
+	return &result, nil
 }
 
-func (c *ClientConfig) ListKernels(ctx context.Context) {
+func (c *ClientConfig) PatchContents(ctx context.Context, path string, options *PatchContentsBody) (*PatchContentsResponse, error) {
+	body, err := json.Marshal(options)
+	if err != nil {
+		return nil, err
+	}
+	fmt.Println(string(body))
 
+	url := fmt.Sprintf("contents/%s", path)
+	data, err := c.Request(ctx, http.MethodPatch, url, "application/json", body)
+	if err != nil {
+		return nil, err
+	}
+
+	var result PatchContentsResponse
+	if err := json.Unmarshal(data, &result); err != nil {
+		return nil, err
+	}
+	return &result, nil
 }
 
-func (c *ClientConfig) CreateKernel(ctx context.Context, kernelSpec string) {
+func (c *ClientConfig) PutContents(ctx context.Context, path string, options *PutContentsBody) (*PutContentsResponse, error) {
+	body, err := json.Marshal(options)
+	if err != nil {
+		return nil, err
+	}
+	fmt.Println(string(body))
 
+	url := fmt.Sprintf("contents/%s", path)
+	data, err := c.Request(ctx, http.MethodPut, url, "application/json", body)
+	if err != nil {
+		return nil, err
+	}
+
+	var result PutContentsResponse
+	if err := json.Unmarshal(data, &result); err != nil {
+		return nil, err
+	}
+	return &result, nil
+}
+
+func (c *ClientConfig) DeleteContents(ctx context.Context, path string) error {
+	url := fmt.Sprintf("contents/%s", path)
+	_, err := c.Request(ctx, http.MethodDelete, url, "application/json", nil)
+	if err != nil {
+		return err
+	}
+	return nil
 }
