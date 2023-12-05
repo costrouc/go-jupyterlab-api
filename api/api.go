@@ -92,7 +92,6 @@ func (c *ClientConfig) CreateContents(ctx context.Context, path string, options 
 	if err != nil {
 		return nil, err
 	}
-	fmt.Println(string(body))
 
 	url := fmt.Sprintf("contents/%s", path)
 	data, err := c.Request(ctx, http.MethodPost, url, "application/json", body)
@@ -112,7 +111,6 @@ func (c *ClientConfig) PatchContents(ctx context.Context, path string, options *
 	if err != nil {
 		return nil, err
 	}
-	fmt.Println(string(body))
 
 	url := fmt.Sprintf("contents/%s", path)
 	data, err := c.Request(ctx, http.MethodPatch, url, "application/json", body)
@@ -132,7 +130,6 @@ func (c *ClientConfig) PutContents(ctx context.Context, path string, options *Pu
 	if err != nil {
 		return nil, err
 	}
-	fmt.Println(string(body))
 
 	url := fmt.Sprintf("contents/%s", path)
 	data, err := c.Request(ctx, http.MethodPut, url, "application/json", body)
@@ -149,6 +146,81 @@ func (c *ClientConfig) PutContents(ctx context.Context, path string, options *Pu
 
 func (c *ClientConfig) DeleteContents(ctx context.Context, path string) error {
 	url := fmt.Sprintf("contents/%s", path)
+	_, err := c.Request(ctx, http.MethodDelete, url, "application/json", nil)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+// TODO: Contents Checkpoint API
+
+func (c *ClientConfig) GetSessions(ctx context.Context) (*GetSessionsResponse, error) {
+	data, err := c.Request(ctx, http.MethodGet, "sessions", "application/json", nil)
+	if err != nil {
+		return nil, err
+	}
+
+	var result GetSessionsResponse
+	if err := json.Unmarshal(data, &result); err != nil {
+		return nil, err
+	}
+	return &result, nil
+}
+
+func (c *ClientConfig) CreateSession(ctx context.Context, session *Session) (*CreateSessionResponse, error) {
+	body, err := json.Marshal(session)
+	if err != nil {
+		return nil, err
+	}
+
+	data, err := c.Request(ctx, http.MethodPost, "sessions", "application/json", body)
+	if err != nil {
+		return nil, err
+	}
+
+	var result CreateSessionResponse
+	if err := json.Unmarshal(data, &result); err != nil {
+		return nil, err
+	}
+	return &result, nil
+}
+
+func (c *ClientConfig) GetSession(ctx context.Context, session string) (*GetSessionResponse, error) {
+	url := fmt.Sprintf("sessions/%s", session)
+	data, err := c.Request(ctx, http.MethodGet, url, "application/json", nil)
+	if err != nil {
+		return nil, err
+	}
+
+	var result GetSessionResponse
+	if err := json.Unmarshal(data, &result); err != nil {
+		return nil, err
+	}
+	return &result, nil
+}
+
+func (c *ClientConfig) PatchSession(ctx context.Context, session string, options *Session) (*PatchSessionResponse, error) {
+	body, err := json.Marshal(options)
+	if err != nil {
+		return nil, err
+	}
+
+	url := fmt.Sprintf("sessions/%s", session)
+	data, err := c.Request(ctx, http.MethodPatch, url, "application/json", body)
+	if err != nil {
+		return nil, err
+	}
+
+	var result PatchSessionResponse
+	if err := json.Unmarshal(data, &result); err != nil {
+		return nil, err
+	}
+	return &result, nil
+}
+
+func (c *ClientConfig) DeleteSession(ctx context.Context, session string) error {
+	url := fmt.Sprintf("sessions/%s", session)
 	_, err := c.Request(ctx, http.MethodDelete, url, "application/json", nil)
 	if err != nil {
 		return err

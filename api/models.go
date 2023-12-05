@@ -78,3 +78,19 @@ type PutContentsBody struct {
 }
 
 type PutContentsResponse Content
+
+type Session struct {
+	Id     string      `json:"id"`
+	Kernel interface{} `json:"kernel"`
+	Name   string      `json:"name"`
+	Path   string      `json:"path"`
+	Type   string      `json:"type"`
+}
+
+type GetSessionsResponse []Session
+
+type CreateSessionResponse Session
+
+type GetSessionResponse Session
+
+type PatchSessionResponse Session

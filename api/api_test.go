@@ -109,3 +109,47 @@ func TestCreateDeleteContents(t *testing.T) {
 		t.Error(err)
 	}
 }
+
+func TestCreateListGetDeleteSessions(t *testing.T) {
+	client, err := CreateClient(&ClientConfig{ApiToken: "faketoken"})
+	if err != nil {
+		t.Error(err)
+	}
+	ctx := context.Background()
+	id := "fe03e6be-47e0-407d-8c3f-46acc6b18d9d"
+	createData, err := client.CreateSession(ctx, &Session{Id: id, Kernel: map[string]string{"name": "python3"}})
+	if err != nil {
+		t.Error(err)
+	}
+	if createData.Id != id {
+		t.Errorf("Expected created session to have id %s", id)
+	}
+
+	listData, err := client.GetSessions(ctx)
+	if err != nil {
+		t.Error(err)
+	}
+
+	foundSession := false
+	for _, session := range *listData {
+		if session.Id == id {
+			foundSession = true
+		}
+	}
+	if !foundSession {
+		t.Errorf("Session %s not found in list", id)
+	}
+
+	getData, err := client.GetSession(ctx, id)
+	if err != nil {
+		t.Error(err)
+	}
+	if getData.Id != id {
+		t.Errorf("Session %s not found", id)
+	}
+
+	err = client.DeleteSession(ctx, id)
+	if err != nil {
+		t.Error(err)
+	}
+}
