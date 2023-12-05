@@ -13,7 +13,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Start JupyterHub
+      - name: Start JupyterLab
         run: docker compose up --build -d
       
       - name: Setup Go ${{ matrix.go-version }}

@@ -4,6 +4,8 @@ The [JupyterLab REST API documentation](https://jupyter-server.readthedocs.io/en
 
 Covered Parts of API:
  - Contents
- - TODO: Terminal
- - TODO: Kernels
- - TODO: Evaluation
+ - Terminal
+ - Kernels
+ - Sessions
+ - TODO: Kernel emulation
+ - TODO: Terminal emulation
