@@ -69,6 +69,32 @@ func (c *ClientConfig) GetVersion(ctx context.Context) (*GetVersionResponse, err
 	return &result, nil
 }
 
+func (c *ClientConfig) GetStatus(ctx context.Context) (*GetStatusResponse, error) {
+	data, err := c.Request(ctx, http.MethodGet, "status", "application/json", nil)
+	if err != nil {
+		return nil, err
+	}
+
+	var result GetStatusResponse
+	if err := json.Unmarshal(data, &result); err != nil {
+		return nil, err
+	}
+	return &result, nil
+}
+
+func (c *ClientConfig) GetMe(ctx context.Context) (*GetMeResponse, error) {
+	data, err := c.Request(ctx, http.MethodGet, "me", "application/json", nil)
+	if err != nil {
+		return nil, err
+	}
+
+	var result GetMeResponse
+	if err := json.Unmarshal(data, &result); err != nil {
+		return nil, err
+	}
+	return &result, nil
+}
+
 func (c *ClientConfig) GetContents(ctx context.Context, path string, options *GetContentsParams) (*GetContentsResponse, error) {
 	url := fmt.Sprintf("contents/%s", path)
 	if options != nil {
@@ -221,6 +247,141 @@ func (c *ClientConfig) PatchSession(ctx context.Context, session string, options
 
 func (c *ClientConfig) DeleteSession(ctx context.Context, session string) error {
 	url := fmt.Sprintf("sessions/%s", session)
+	_, err := c.Request(ctx, http.MethodDelete, url, "application/json", nil)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (c *ClientConfig) GetKernelSpecs(ctx context.Context) (*GetKernelSpecsResponse, error) {
+	data, err := c.Request(ctx, http.MethodGet, "kernelspecs", "application/json", nil)
+	if err != nil {
+		return nil, err
+	}
+
+	var result GetKernelSpecsResponse
+	if err := json.Unmarshal(data, &result); err != nil {
+		return nil, err
+	}
+	return &result, nil
+}
+
+func (c *ClientConfig) GetKernels(ctx context.Context) (*GetKernelsResponse, error) {
+	data, err := c.Request(ctx, http.MethodGet, "kernels", "application/json", nil)
+	if err != nil {
+		return nil, err
+	}
+
+	var result GetKernelsResponse
+	if err := json.Unmarshal(data, &result); err != nil {
+		return nil, err
+	}
+	return &result, nil
+}
+
+func (c *ClientConfig) CreateKernel(ctx context.Context, options CreateKernelBody) (*CreateKernelResponse, error) {
+	body, err := json.Marshal(options)
+	if err != nil {
+		return nil, err
+	}
+
+	data, err := c.Request(ctx, http.MethodPost, "kernels", "application/json", body)
+	if err != nil {
+		return nil, err
+	}
+	var result CreateKernelResponse
+	if err := json.Unmarshal(data, &result); err != nil {
+		return nil, err
+	}
+	return &result, nil
+}
+
+func (c *ClientConfig) GetKernel(ctx context.Context, kernel string) (*GetKernelResponse, error) {
+	url := fmt.Sprintf("kernels/%s", kernel)
+	data, err := c.Request(ctx, http.MethodGet, url, "application/json", nil)
+	if err != nil {
+		return nil, err
+	}
+
+	var result GetKernelResponse
+	if err := json.Unmarshal(data, &result); err != nil {
+		return nil, err
+	}
+	return &result, nil
+}
+
+func (c *ClientConfig) DeleteKernel(ctx context.Context, kernel string) error {
+	url := fmt.Sprintf("kernels/%s", kernel)
+	_, err := c.Request(ctx, http.MethodDelete, url, "application/json", nil)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (c *ClientConfig) InterruptKernel(ctx context.Context, kernel string) error {
+	url := fmt.Sprintf("kernels/%s/interrupt", kernel)
+	_, err := c.Request(ctx, http.MethodPost, url, "application/json", nil)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (c *ClientConfig) RestartKernel(ctx context.Context, kernel string) error {
+	url := fmt.Sprintf("kernels/%s/restart", kernel)
+	_, err := c.Request(ctx, http.MethodPost, url, "application/json", nil)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+// TODO: GET and PATCH /api/config/...
+
+func (c *ClientConfig) GetTerminals(ctx context.Context) (*GetTerminalsResponse, error) {
+	data, err := c.Request(ctx, http.MethodGet, "terminals", "application/json", nil)
+	if err != nil {
+		return nil, err
+	}
+
+	var result GetTerminalsResponse
+	if err := json.Unmarshal(data, &result); err != nil {
+		return nil, err
+	}
+	return &result, nil
+}
+
+func (c *ClientConfig) CreateTerminal(ctx context.Context) (*CreateTerminalResponse, error) {
+	data, err := c.Request(ctx, http.MethodPost, "terminals", "application/json", nil)
+	if err != nil {
+		return nil, err
+	}
+
+	var result CreateTerminalResponse
+	if err := json.Unmarshal(data, &result); err != nil {
+		return nil, err
+	}
+	return &result, nil
+}
+
+func (c *ClientConfig) GetTerminal(ctx context.Context, terminal string) (*GetTerminalResponse, error) {
+	url := fmt.Sprintf("terminals/%s", terminal)
+	data, err := c.Request(ctx, http.MethodGet, url, "application/json", nil)
+	if err != nil {
+		return nil, err
+	}
+
+	var result GetTerminalResponse
+	if err := json.Unmarshal(data, &result); err != nil {
+		return nil, err
+	}
+	return &result, nil
+}
+
+func (c *ClientConfig) DeleteTerminal(ctx context.Context, terminal string) error {
+	url := fmt.Sprintf("terminals/%s", terminal)
 	_, err := c.Request(ctx, http.MethodDelete, url, "application/json", nil)
 	if err != nil {
 		return err

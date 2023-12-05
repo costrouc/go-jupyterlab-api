@@ -22,6 +22,30 @@ func TestGetVersion(t *testing.T) {
 	}
 }
 
+func TestGetStatus(t *testing.T) {
+	client, err := CreateClient(&ClientConfig{ApiToken: "faketoken"})
+	if err != nil {
+		t.Error(err)
+	}
+	ctx := context.Background()
+	_, err = client.GetStatus(ctx)
+	if err != nil {
+		t.Error(err)
+	}
+}
+
+func TestGetMe(t *testing.T) {
+	client, err := CreateClient(&ClientConfig{ApiToken: "faketoken"})
+	if err != nil {
+		t.Error(err)
+	}
+	ctx := context.Background()
+	_, err = client.GetMe(ctx)
+	if err != nil {
+		t.Error(err)
+	}
+}
+
 func TestGetContents(t *testing.T) {
 	client, err := CreateClient(&ClientConfig{ApiToken: "faketoken"})
 	if err != nil {
@@ -149,6 +173,103 @@ func TestCreateListGetDeleteSessions(t *testing.T) {
 	}
 
 	err = client.DeleteSession(ctx, id)
+	if err != nil {
+		t.Error(err)
+	}
+}
+
+func TestGetKernelSpecs(t *testing.T) {
+	client, err := CreateClient(&ClientConfig{ApiToken: "faketoken"})
+	if err != nil {
+		t.Error(err)
+	}
+	ctx := context.Background()
+	data, err := client.GetKernelSpecs(ctx)
+	if err != nil {
+		t.Error(err)
+	}
+	if data.Default != "python3" {
+		t.Errorf("Expected default kernelspec to be python3, got %s", data.Default)
+	}
+}
+
+func TestCreateListGetDeleteKernels(t *testing.T) {
+	client, err := CreateClient(&ClientConfig{ApiToken: "faketoken"})
+	if err != nil {
+		t.Error(err)
+	}
+	ctx := context.Background()
+	createData, err := client.CreateKernel(ctx, CreateKernelBody{Name: "python3"})
+	if err != nil {
+		t.Error(err)
+	}
+	id := createData.Id
+
+	listKernels, err := client.GetKernels(ctx)
+	if err != nil {
+		t.Error(err)
+	}
+
+	found := false
+	for _, kernel := range *listKernels {
+		if kernel.Id == id {
+			found = true
+		}
+	}
+	if !found {
+		t.Errorf("Expecting to find kernel with id %s didn't find", id)
+	}
+
+	getData, err := client.GetKernel(ctx, id)
+	if err != nil {
+		t.Error(err)
+	}
+	if getData.Id != id {
+		t.Errorf("Expecting to find kernel with id %s didn't find, got %s", id, getData.Id)
+	}
+
+	err = client.DeleteKernel(ctx, id)
+	if err != nil {
+		t.Error(err)
+	}
+}
+
+func TestCreateListGetDeleteTerminals(t *testing.T) {
+	client, err := CreateClient(&ClientConfig{ApiToken: "faketoken"})
+	if err != nil {
+		t.Error(err)
+	}
+	ctx := context.Background()
+	createData, err := client.CreateTerminal(ctx)
+	if err != nil {
+		t.Error(err)
+	}
+	name := createData.Name
+
+	listTerminals, err := client.GetTerminals(ctx)
+	if err != nil {
+		t.Error(err)
+	}
+
+	found := false
+	for _, terminal := range *listTerminals {
+		if terminal.Name == name {
+			found = true
+		}
+	}
+	if !found {
+		t.Errorf("Expecting to find terminal with name %s didn't find", name)
+	}
+
+	getData, err := client.GetTerminal(ctx, name)
+	if err != nil {
+		t.Error(err)
+	}
+	if getData.Name != name {
+		t.Errorf("Expecting to find kernel with id %s didn't find, got %s", name, getData.Name)
+	}
+
+	err = client.DeleteTerminal(ctx, name)
 	if err != nil {
 		t.Error(err)
 	}

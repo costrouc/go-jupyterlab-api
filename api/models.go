@@ -14,6 +14,18 @@ type GetVersionResponse struct {
 	Version string `json:"version"`
 }
 
+type GetStatusResponse struct {
+	Connections  int    `json:"connections"`
+	Kernels      int    `json:"kernels"`
+	LastActivity string `json:"last_activity"`
+	Started      string `json:"started"`
+}
+
+type GetMeResponse struct {
+	Identity    interface{} `json:"identity"`
+	Permissions interface{} `json:"permissions"`
+}
+
 type GetContentsParams struct {
 	Type    string
 	Format  string
@@ -94,3 +106,44 @@ type CreateSessionResponse Session
 type GetSessionResponse Session
 
 type PatchSessionResponse Session
+
+type KernelSpec struct {
+	Name      string            `json:"name"`
+	Spec      interface{}       `json:"spec"`
+	Resources map[string]string `json:"resources"`
+}
+
+type GetKernelSpecsResponse struct {
+	Default     string                `json:"default"`
+	KernelSpecs map[string]KernelSpec `json:"kernelspecs"`
+}
+
+type Kernel struct {
+	Id             string `json:"id"`
+	Name           string `json:"name"`
+	LastActivity   string `json:"last_activity"`
+	ExecutionState string `json:"execution_state"`
+	Connections    int    `json:"connections"`
+}
+
+type GetKernelsResponse []Kernel
+
+type CreateKernelBody struct {
+	Name string `json:"name"`
+	Path string `json:"path"`
+}
+
+type CreateKernelResponse Kernel
+
+type GetKernelResponse Kernel
+
+type Terminal struct {
+	LastActivity string `json:"last_activity"`
+	Name         string `json:"name"`
+}
+
+type GetTerminalsResponse []Terminal
+
+type CreateTerminalResponse Terminal
+
+type GetTerminalResponse Terminal
